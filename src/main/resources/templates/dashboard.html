@@ -57,7 +57,7 @@
                     <td th:text="${incident.elapsedHours} + ' h'"></td>
                     <td th:text="${incident.nature}"></td>
                     <td>
-                        <a th:href="@{/incidents/{id}(id=${incident.id})}" class="btn btn-sm btn-outline-info">Détails</a>
+                        <a th:href="@{'/incidents/detail/' + ${incident.id}}" class="btn btn-sm btn-outline-info">Détails</a>
                         <a th:href="@{/incidents/edit/{id}(id=${incident.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
                     </td>
                 </tr>
