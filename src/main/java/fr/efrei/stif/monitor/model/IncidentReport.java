@@ -41,20 +41,6 @@ public class IncidentReport {
     @Column(name = "agent_id", nullable = false)
     private Integer agentId;
 
-    public long getElapsedHours() {
-        if (dateTime == null) return 0;
-        return Duration.between(dateTime, LocalDateTime.now()).toHours();
-    }
-
-    public String getStatusIndicator() {
-        if (assignedCompany != null) return "ASSIGNED";
-
-        long hours = getElapsedHours();
-        if (hours < 48) return "GREEN";
-        if (hours < 72) return "ORANGE";
-        return "RED";
-    }
-
     public Integer getId() {
         return id;
     }

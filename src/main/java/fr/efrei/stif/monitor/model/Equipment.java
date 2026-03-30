@@ -16,8 +16,9 @@ public class Equipment {
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 
-    @Column(name = "station_id", nullable = false)
-    private Integer stationId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "station_id", nullable = false)
+    private Station station;
 
     @Column(name = "type", nullable = false, length = 20)
     private String type;
@@ -46,13 +47,10 @@ public class Equipment {
         this.status = status;
     }
 
-    public Integer getStationId() {
-        return stationId;
+    public Station getStation() {
+        return station;
     }
 
-    public void setStationId(Integer stationId) {
-        this.stationId = stationId;
-    }
 
     public String getType() {
         return type;

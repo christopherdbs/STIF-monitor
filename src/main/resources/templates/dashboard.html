@@ -52,13 +52,13 @@
                              th:title="${incident.elapsedHours} + ' heures écoulées'">
                         </div>
                     </td>
-                    <td th:text="${incident.equipment.serialNumber}" class="fw-bold"></td>
-                    <td th:text="${incident.equipment.stationId}"></td>
+                    <td th:text="${incident.report.equipment.serialNumber}" class="fw-bold"></td>
+                    <td th:text="${incident.report.equipment.station.stationName}"></td>
                     <td th:text="${incident.elapsedHours} + ' h'"></td>
-                    <td th:text="${incident.nature}"></td>
+                    <td th:text="${incident.report.nature}"></td>
                     <td>
-                        <a th:href="@{'/incidents/detail/' + ${incident.id}}" class="btn btn-sm btn-outline-info">Détails</a>
-                        <a th:href="@{/incidents/edit/{id}(id=${incident.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                        <a th:href="@{'/incidents/detail/' + ${incident.report.id}}"  class="btn btn-sm btn-outline-info">Détails</a>
+                        <a th:href="@{/incidents/edit/{id}(id=${incident.report.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(incidents)}">

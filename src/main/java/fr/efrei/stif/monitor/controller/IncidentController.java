@@ -1,6 +1,7 @@
 package fr.efrei.stif.monitor.controller;
 
 import fr.efrei.stif.monitor.controller.IncidentService;
+import fr.efrei.stif.monitor.model.CompletedReport;
 import fr.efrei.stif.monitor.model.IncidentReport;
 import fr.efrei.stif.monitor.model.IncidentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class IncidentController {
 
     @GetMapping("/")
     public String dashboard(Model model) {
-        List<IncidentReport> activeIncidents = incidentService.getActiveIncidents();
+        List<CompletedReport> activeIncidents = incidentService.getActiveIncidents();
         System.out.println(activeIncidents);
         model.addAttribute("incidents", activeIncidents);
         return "dashboard";
