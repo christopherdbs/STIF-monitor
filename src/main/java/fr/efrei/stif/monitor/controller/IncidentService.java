@@ -3,6 +3,8 @@ package fr.efrei.stif.monitor.controller;
 import fr.efrei.stif.monitor.model.CompletedReport;
 import fr.efrei.stif.monitor.model.IncidentReport;
 import fr.efrei.stif.monitor.model.IncidentRepository;
+import fr.efrei.stif.monitor.model.Station;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +50,14 @@ public class IncidentService {
         return incidentRepository.findById(id).orElse(null);
     }
 
+    public IncidentReport updateIncidentReport(Integer id,IncidentReport NewincidentReport) {
+        IncidentReport oldIncidentReport = incidentRepository.findById(id)
+                .orElse(null);
+
+        BeanUtils.copyProperties(NewincidentReport, oldIncidentReport, "id");
+
+        return incidentRepository.save(oldIncidentReport);
+    }
 
     public long getElapsedHours(IncidentReport report) {
         System.out.print(report.getDateTime());
@@ -64,4 +74,6 @@ public class IncidentService {
     public void delete(Integer id) {
         incidentRepository.deleteById(id);
     }
+
+
 }

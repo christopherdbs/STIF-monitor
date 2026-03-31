@@ -5,8 +5,7 @@ import fr.efrei.stif.monitor.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -55,4 +54,13 @@ public class IncidentController {
         //model.addAttribute("equipments", incidentService.findAll());
         return "create-incident";
     }
+
+    @PostMapping("/incidents/{id}/modify")
+    public String modifyForm(@RequestParam Integer id, @ModelAttribute IncidentReport oldIncidentReport, Model model) {
+        incidentService.updateIncidentReport(id, oldIncidentReport);
+        return "redirect:/incidents/{id}";
+    }
+
+
+
 }
