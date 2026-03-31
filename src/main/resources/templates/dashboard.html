@@ -12,19 +12,38 @@
             border-radius: 50%;
             display: inline-block;
         }
+        .header-section {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
         .bg-green { background-color: #28a745; }
         .bg-orange { background-color: #fd7e14; }
         .bg-red { background-color: #dc3545; }
     </style>
 </head>
 <body class="bg-light">
-
+<!--
 <nav class="navbar navbar-dark bg-dark mb-4">
     <div class="container">
         <span class="navbar-brand mb-0 h1">STIF Equipment Monitor</span>
         <a th:href="@{/incidents/new}" class="btn btn-primary">Report an incident</a>
     </div>
 </nav>
+-->
+<div class="header-section shadow-sm">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <nav aria-label="breadcrumb">
+                        <h1 class="h5"><a th:href="@{/}" class="text-decoration-none">STIF Equipment Monitor</a></h1>
+                </nav>
+            </div>
+            <a th:href="@{/}" class="btn btn-outline-primary">Report an incident</a>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="card shadow">
@@ -57,8 +76,9 @@
                     <td th:text="${incident.elapsedHours} + ' h'"></td>
                     <td th:text="${incident.report.nature}"></td>
                     <td>
-                        <a th:href="@{'/incidents/' + ${incident.report.id}}"  class="btn btn-sm btn-outline-info">Détails</a>
-                        <a th:href="@{/incidents/edit/{id}(id=${incident.report.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                        <a th:href="@{'/incidents/' + ${incident.report.id}}"  class="btn btn-sm btn-outline-primary">Details</a>
+                        <a th:href="@{/incidents/edit/{id}(id=${incident.report.id})}" class="btn btn-sm btn-outline-success">Modify</a>
+                        <span th:href="@{/incidents/edit/{id}(id=${incident.report.id})}" class="text-danger fw-bold ">X</span>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(incidents)}">
