@@ -8,13 +8,17 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class IncidentService {
 
-    @Autowired
-    private IncidentRepository incidentRepository;
+    private final IncidentRepository incidentRepository;
+
+    public IncidentService(IncidentRepository incidentRepository){
+        this.incidentRepository = incidentRepository;
+    }
 
     public List<CompletedReport> getActiveIncidents(){
         List<IncidentReport> reports = incidentRepository.findByIsRepairedFalse();
@@ -26,6 +30,14 @@ public class IncidentService {
             completed.setStatusIndicator(getStatusIndicator(report, hours));
             return completed;
         }).toList();
+    }
+
+    public List<IncidentReport> getFullHistory(Integer equipmentId) {
+        return incidentRepository.findByEquipmentIdOrderByDateTimeDesc(equipmentId);
+    }
+
+    public List<IncidentReport> getRecentHistory(Integer equipmentId, Integer reportId) {
+        return incidentRepository.findTop3ByEquipmentIdAndIdNotOrderByDateTimeDesc(equipmentId, reportId);
     }
 
     public IncidentReport save(IncidentReport incident) {

@@ -139,7 +139,33 @@
                 </div>
 
             </div>
+            <div class="col-md-12 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-3" style="color: #475569; font-weight: 700;">Equipment History</h5>
+                    <a th:if="${not #lists.isEmpty(history)}"
+                       th:href="@{/equipment/{id}/history(id=${incidentReport.equipment.getId()})}"
+                       class="btn btn-sm btn-link text-decoration-none fw-bold">
+                        See more →
+                    </a>
+                </div>
+                <div th:if="${#lists.isEmpty(history)}" class="text-muted small p-3 border rounded bg-white">
+                    No previous incidents recorded for this equipment.
+                </div>
 
+                <div th:each="hist : ${history}" class="info-box mb-2 border-start border-4 border-primary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="label" th:text="${#temporals.format(hist.dateTime, 'dd/MM/yyyy HH:mm')}">Date</div>
+                            <div class="value" th:text="${hist.nature}">Nature de l'incident</div>
+                        </div>
+                        <div>
+                            <span th:if="${hist.isRepaired}" class="badge bg-success-subtle text-success border border-success-subtle">Repaired</span>
+                            <span th:unless="${hist.isRepaired}" class="badge bg-warning-subtle text-warning border border-warning-subtle">Pending</span>
+                        </div>
+                    </div>
+                    <div class="mt-2 small text-secondary" th:text="${hist.comments}">Comments...</div>
+                </div>
+            </div>
             <!-- Button -->
             <div class="mt-4 text-center">
                 <a th:href="@{/}" class="btn btn-outline-secondary px-4">
