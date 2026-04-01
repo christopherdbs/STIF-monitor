@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>STIF - Dashboard Maintenance</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <style>
             .status-indicator {
@@ -38,6 +39,18 @@
 
             #context-bar {
                 transition: all 0.3s ease-in-out;
+            }
+            .status-indicator.assigned {
+                background-color: #0d6efd;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            .status-indicator i {
+                font-size: 12px;
+                -webkit-text-stroke: 1px;
             }
         </style>
     </head>
@@ -75,10 +88,16 @@
                         <tbody>
                         <tr th:each="incident : ${incidents}">
                             <td>
-                                <div th:classappend="${incident.statusIndicator == 'GREEN' ? 'bg-green' :
+                                <div th:if="${incident.report.assignedCompany != null}"
+                                     class="status-indicator assigned"
+                                     title="Assigned to a company">
+                                    <i class="bi bi-check-lg"></i>
+                                </div>
+                                <div th:if="${incident.report.assignedCompany == null}"
+                                     th:classappend="${incident.statusIndicator == 'GREEN' ? 'bg-green' :
                                                        (incident.statusIndicator == 'ORANGE' ? 'bg-orange' : 'bg-red')}"
                                      class="status-indicator"
-                                     th:title="${incident.elapsedHours} + ' heures écoulées'">
+                                     th:title="${incident.elapsedHours} + ' elapsed hours'">
                                 </div>
                             </td>
                             <td th:text="${incident.report.equipment.serialNumber}" class="fw-bold"></td>
@@ -117,9 +136,7 @@
 
     document.querySelectorAll('tbody tr').forEach(row => {
         const detailsLink = row.querySelector('a[href^="/incidents/"]')?.getAttribute('href');
-
         const id = detailsLink ? detailsLink.split('/').pop() : null;
-
         if (!id) return;
 
         row.addEventListener('click', (e) => {
@@ -143,7 +160,7 @@
         document.getElementById('btn-details').onclick = () => window.location.href = '/incidents/' + id;
         document.getElementById('btn-edit').onclick = () => window.location.href = '/incidents/edit/' + id;
         document.getElementById('btn-delete').onclick = () => {
-            if(confirm('Supprimer cet incident ?')) window.location.href = '/incidents/delete/' + id;
+            if(confirm('Remove this incident ?')) window.location.href = '/incidents/delete/' + id;
         };
 
         contextBar.classList.remove('d-none');
