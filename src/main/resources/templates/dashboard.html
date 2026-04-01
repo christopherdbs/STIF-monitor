@@ -1,95 +1,163 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>STIF - Dashboard Maintenance</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        .status-indicator {
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .header-section {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 15px 0;
-            margin-bottom: 30px;
-        }
-        .bg-green { background-color: #28a745; }
-        .bg-orange { background-color: #fd7e14; }
-        .bg-red { background-color: #dc3545; }
-    </style>
-</head>
-<body class="bg-light">
-<!--
-<nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-        <span class="navbar-brand mb-0 h1">STIF Equipment Monitor</span>
-        <a th:href="@{/incidents/new}" class="btn btn-primary">Report an incident</a>
-    </div>
-</nav>
--->
-<div class="header-section shadow-sm">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <nav aria-label="breadcrumb">
-                        <h1 class="h5"><a th:href="@{/}" class="text-decoration-none">STIF Equipment Monitor</a></h1>
-                </nav>
+    <head>
+        <meta charset="UTF-8">
+        <title>STIF - Dashboard Maintenance</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <style>
+            .status-indicator {
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+            .header-section {
+                background: white;
+                border-bottom: 1px solid #e2e8f0;
+                padding: 15px 0;
+                margin-bottom: 30px;
+            }
+            .bg-green { background-color: #28a745; }
+            .bg-orange { background-color: #fd7e14; }
+            .bg-red { background-color: #dc3545; }
+            tbody tr {
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+
+            tbody tr:hover {
+                background-color: #f8fafc !important;
+            }
+
+            .selected-row {
+                background-color: #e2e8f0 !important;
+                border-left: 5px solid #0d6efd;
+                font-weight: 500;
+            }
+
+            #context-bar {
+                transition: all 0.3s ease-in-out;
+            }
+        </style>
+    </head>
+    <body class="bg-light">
+        <div class="header-section shadow-sm">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <nav aria-label="breadcrumb">
+                                <h1 class="h5"><a th:href="@{/}" class="text-decoration-none">STIF Equipment Monitor</a></h1>
+                        </nav>
+                    </div>
+                    <a th:href="@{/incidents/add}" class="btn btn-outline-primary">Report an incident</a>
+                </div>
             </div>
-            <a th:href="@{/incidents/add}" class="btn btn-outline-primary">Report an incident</a>
         </div>
-    </div>
-</div>
 
-<div class="container">
-    <div class="card shadow">
-        <div class="card-header bg-white">
-            <h2 class="h5 mb-0">Active Incidents</h2>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead class="table-light">
-                <tr>
-                    <th>Status</th>
-                    <th>Equipment</th>
-                    <th>Station</th>
-                    <th>Reported since</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="incident : ${incidents}">
-                    <td>
-                        <div th:classappend="${incident.statusIndicator == 'GREEN' ? 'bg-green' :
-                                               (incident.statusIndicator == 'ORANGE' ? 'bg-orange' : 'bg-red')}"
-                             class="status-indicator"
-                             th:title="${incident.elapsedHours} + ' heures écoulées'">
+        <div class="container">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h2 class="h5 mb-0">Active Incidents</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Status</th>
+                            <th>Equipment</th>
+                            <th>Station</th>
+                            <th>Reported since</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="incident : ${incidents}">
+                            <td>
+                                <div th:classappend="${incident.statusIndicator == 'GREEN' ? 'bg-green' :
+                                                       (incident.statusIndicator == 'ORANGE' ? 'bg-orange' : 'bg-red')}"
+                                     class="status-indicator"
+                                     th:title="${incident.elapsedHours} + ' heures écoulées'">
+                                </div>
+                            </td>
+                            <td th:text="${incident.report.equipment.serialNumber}" class="fw-bold"></td>
+                            <td th:text="${incident.report.equipment.station.stationName}"></td>
+                            <td th:text="${incident.elapsedHours} + ' h'"></td>
+                            <td th:text="${incident.report.nature}"></td>
+                            <td>
+                                <a th:href="@{'/incidents/' + ${incident.report.id}}"  class="btn btn-sm btn-outline-primary">Details</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(incidents)}">
+                            <td colspan="6" class="text-center text-muted">No critical incidents to report. Everything works ! </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div id="context-bar" class="fixed-bottom bg-dark text-white p-3 shadow-lg d-none" style="z-index: 1050;">
+                        <div class="container d-flex justify-content-between align-items-center">
+                            <span id="selected-item-text">1 selected incident</span>
+                            <div>
+                                <button id="btn-details" class="btn btn-primary me-2">Details</button>
+                                <button id="btn-edit" class="btn btn-success me-2">Modify</button>
+                                <button id="btn-delete" class="btn btn-danger">Delete</button>
+                                <button onclick="hideContextBar()" class="btn btn-outline-light ms-3">X</button>
+                            </div>
                         </div>
-                    </td>
-                    <td th:text="${incident.report.equipment.serialNumber}" class="fw-bold"></td>
-                    <td th:text="${incident.report.equipment.station.stationName}"></td>
-                    <td th:text="${incident.elapsedHours} + ' h'"></td>
-                    <td th:text="${incident.report.nature}"></td>
-                    <td>
-                        <a th:href="@{'/incidents/' + ${incident.report.id}}"  class="btn btn-sm btn-outline-primary">Details</a>
-                        <a th:href="@{/incidents/edit/{id}(id=${incident.report.id})}" class="btn btn-sm btn-outline-success">Modify</a>
-                        <span th:href="@{/incidents/delete/{id}(id=${incident.report.id})}" class="text-danger fw-bold ">X</span>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(incidents)}">
-                    <td colspan="6" class="text-center text-muted">No critical incidents to report. Everything works ! </td>
-                </tr>
-                </tbody>
-            </table>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
-
-</body>
+    </body>
 </html>
+<script>
+
+    const contextBar = document.getElementById('context-bar');
+    let currentSelectedRow = null;
+
+    document.querySelectorAll('tbody tr').forEach(row => {
+        const detailsLink = row.querySelector('a[href^="/incidents/"]')?.getAttribute('href');
+
+        const id = detailsLink ? detailsLink.split('/').pop() : null;
+
+        if (!id) return;
+
+        row.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.classList.contains('text-danger')) return;
+
+            showContextBar(id, row);
+        });
+    });
+
+    function showContextBar(id, row) {
+        if (currentSelectedRow === row) {
+            hideContextBar();
+            return;
+        }
+
+        document.querySelectorAll('tr').forEach(r => r.classList.remove('selected-row'));
+
+        row.classList.add('selected-row');
+        currentSelectedRow = row;
+
+        document.getElementById('btn-details').onclick = () => window.location.href = '/incidents/' + id;
+        document.getElementById('btn-edit').onclick = () => window.location.href = '/incidents/edit/' + id;
+        document.getElementById('btn-delete').onclick = () => {
+            if(confirm('Supprimer cet incident ?')) window.location.href = '/incidents/delete/' + id;
+        };
+
+        contextBar.classList.remove('d-none');
+    }
+
+    function hideContextBar() {
+        contextBar.classList.add('d-none');
+        if (currentSelectedRow) currentSelectedRow.classList.remove('selected-row');
+        currentSelectedRow = null;
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('table') && !e.target.closest('#context-bar')) {
+            hideContextBar();
+        }
+    });
+</script>
