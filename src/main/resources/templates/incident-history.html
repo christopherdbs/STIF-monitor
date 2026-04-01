@@ -84,8 +84,8 @@
                             <span class="date-badge" th:text="${#temporals.format(report.dateTime, 'dd MMMM yyyy - HH:mm')}"></span>
                             <h5 class="mb-1 mt-1 fw-bold text-dark" th:text="${report.nature}">Nature</h5>
                         </div>
-                        <span th:class="${report.isRepaired ? 'badge bg-success-subtle text-success' : 'badge bg-danger-subtle text-danger'}"
-                              th:text="${report.isRepaired ? 'Resolved' : 'Critical'}">
+                        <span th:class="${report.status ? 'badge bg-success-subtle text-success' : 'badge bg-danger-subtle text-danger'}"
+                              th:text="${report.status ? 'Resolved' : 'Current'}">
                         </span>
                     </div>
 

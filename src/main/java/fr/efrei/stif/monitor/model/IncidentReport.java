@@ -6,7 +6,6 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,8 +30,8 @@ public class IncidentReport {
     private String assignedCompany;
 
     @ColumnDefault("0")
-    @Column(name = "is_repaired")
-    private Boolean isRepaired;
+    @Column(name = "status")
+    private Boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -83,12 +82,12 @@ public class IncidentReport {
         this.assignedCompany = assignedCompany;
     }
 
-    public Boolean getIsRepaired() {
-        return isRepaired;
+    public Boolean getStatus() {
+        return status;
     }
 
-    public void setIsRepaired(Boolean isRepaired) {
-        this.isRepaired = isRepaired;
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
     public Equipment getEquipment() {

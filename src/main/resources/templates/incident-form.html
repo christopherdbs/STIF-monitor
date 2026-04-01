@@ -122,8 +122,8 @@
                                 <span class="value">Is the incident resolved?</span>
                             </div>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="isRepaired" name="isRepaired"
-                                       style="width: 2.5em; height: 1.25em;" th:checked="${incidentReport.isRepaired}">
+                                <input class="form-check-input" type="checkbox" id="status" name="status"
+                                       style="width: 2.5em; height: 1.25em;" th:checked="${incidentReport.status}">
                             </div>
                         </div>
                     </div>
@@ -178,7 +178,7 @@
 
         // Conversion des types
         data.agentId = parseInt(data.agentId);
-        data.isRepaired = document.getElementById('isRepaired').checked;
+        data.status = document.getElementById('status').checked;
 
         const id = document.getElementById('reportId').value;
         const url = id ? `/api/incidents/${id}` : '/api/incidents';

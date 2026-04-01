@@ -22,7 +22,7 @@ nature VARCHAR(255) NOT NULL,
 comments TEXT,
 date_time DATETIME,
 assigned_company VARCHAR(255),
-is_repaired BOOLEAN DEFAULT FALSE,
+status BOOLEAN DEFAULT FALSE,
 equipment_id INT NOT NULL,
 agent_id INT NOT NULL,
 CONSTRAINT fk_incident_equipment
@@ -42,21 +42,21 @@ INSERT INTO stations (station_name) VALUES
 
 -- 2. Insert into EQUIPMENTS
 INSERT INTO equipments (serial_number, station_id, type, status) VALUES
-('ESC-402', 1, 'ESCALATOR', 'Operational'),
-('ELEV-105', 2, 'ELEVATOR', 'Under Maintenance'),
-('FLAT-99', 3, 'FLAT_ESCALATOR', 'Broken'),
-('ESC-505', 4, 'ESCALATOR', 'Broken'),
-('ELEV-202', 5, 'ELEVATOR', 'Under Maintenance');
+('GDN-ESC-402', 1, 'ESCALATOR', 'Operational'),
+('CLH-ELEV-105', 2, 'ELEVATOR', 'Under Repair'),
+('MPN-FLAT-99', 3, 'FLAT_ESCALATOR', 'Out of Service'),
+('LPD-ESC-505', 4, 'ESCALATOR', 'Out of Service'),
+('LFL-ELEV-202', 5, 'ELEVATOR', 'Degraded');
 
 -- 3. Insert into INCIDENT_REPORTS
-INSERT INTO incident_reports (nature, date_time, comments, is_repaired, equipment_id, agent_id, assigned_company)
+INSERT INTO incident_reports (nature, date_time, comments, status, equipment_id, agent_id, assigned_company)
 VALUES
 ('Broken step', DATE_SUB(NOW(), INTERVAL 5 HOUR), 'Reported by a passenger this morning.', false, 1, 1, NULL),
 ('Abnormal noise', DATE_SUB(NOW(), INTERVAL 50 HOUR), 'Waiting for technical diagnosis.', false, 2, 1, NULL),
 ('Total shutdown', DATE_SUB(NOW(), INTERVAL 80 HOUR), 'Major engine failure detected.', false, 3, 1, NULL),
 ('Emergency button stuck', DATE_SUB(NOW(), INTERVAL 200 HOUR), 'Fixed by the company OTIS.', true, 1, 1, 'OTIS');
 
-INSERT INTO incident_reports (nature, date_time, comments, is_repaired, equipment_id, agent_id, assigned_company) VALUES
+INSERT INTO incident_reports (nature, date_time, comments, status, equipment_id, agent_id, assigned_company) VALUES
 -- Équipment 1 (Gare du Nord)
 ('Chain lubrication', DATE_SUB(NOW(), INTERVAL 15 DAY), 'Standard bi-weekly maintenance.', true, 1, 1, 'KONE'),
 ('Key switch replacement', DATE_SUB(NOW(), INTERVAL 10 DAY), 'Worn out start switch replaced.', true, 1, 1, 'KONE'),
