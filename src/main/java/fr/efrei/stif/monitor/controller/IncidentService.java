@@ -1,12 +1,10 @@
 package fr.efrei.stif.monitor.controller;
 
-import fr.efrei.stif.monitor.model.CompletedReport;
-import fr.efrei.stif.monitor.model.IncidentReport;
-import fr.efrei.stif.monitor.model.IncidentRepository;
-import fr.efrei.stif.monitor.model.Station;
+import fr.efrei.stif.monitor.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,9 +15,11 @@ import java.util.List;
 public class IncidentService {
 
     private final IncidentRepository incidentRepository;
+    private final EquipmentService equipmentService;
 
-    public IncidentService(IncidentRepository incidentRepository){
+    public IncidentService(IncidentRepository incidentRepository, EquipmentService equipmentService){
         this.incidentRepository = incidentRepository;
+        this.equipmentService = equipmentService;
     }
 
     public List<CompletedReport> getActiveIncidents(){
@@ -43,6 +43,15 @@ public class IncidentService {
     }
 
     public IncidentReport save(IncidentReport incident) {
+        if (incident.getEquipment() != null && incident.getEquipment().getId() != null) {
+            Equipment eq = equipmentService.findById(incident.getEquipment().getId());
+            incident.setEquipment(eq);
+        }
+
+        Integer agentId = (incident.getAgentId() != null )
+                ? incident.getAgentId()
+                : 1;
+
         return incidentRepository.save(incident);
     }
 
@@ -50,13 +59,20 @@ public class IncidentService {
         return incidentRepository.findById(id).orElse(null);
     }
 
-    public IncidentReport updateIncidentReport(Integer id,IncidentReport NewincidentReport) {
-        IncidentReport oldIncidentReport = incidentRepository.findById(id)
-                .orElse(null);
+    @Transactional
+    public IncidentReport updateIncidentReport(Integer id, IncidentReport newIR) {
 
-        BeanUtils.copyProperties(NewincidentReport, oldIncidentReport, "id");
+        IncidentReport oldIR = incidentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Incident non trouvé"));
 
-        return incidentRepository.save(oldIncidentReport);
+        BeanUtils.copyProperties(newIR, oldIR, "id");
+
+        if (newIR.getEquipment() != null) {
+            Equipment eq = equipmentService.findById(newIR.getEquipment().getId());
+            oldIR.setEquipment(eq);
+        }
+
+        return incidentRepository.save(oldIR);
     }
 
     public long getElapsedHours(IncidentReport report) {

@@ -40,7 +40,7 @@
                         <h1 class="h5"><a th:href="@{/}" class="text-decoration-none">STIF Equipment Monitor</a></h1>
                 </nav>
             </div>
-            <a th:href="@{/}" class="btn btn-outline-primary">Report an incident</a>
+            <a th:href="@{/incidents/add}" class="btn btn-outline-primary">Report an incident</a>
         </div>
     </div>
 </div>
@@ -78,11 +78,11 @@
                     <td>
                         <a th:href="@{'/incidents/' + ${incident.report.id}}"  class="btn btn-sm btn-outline-primary">Details</a>
                         <a th:href="@{/incidents/edit/{id}(id=${incident.report.id})}" class="btn btn-sm btn-outline-success">Modify</a>
-                        <span th:href="@{/incidents/edit/{id}(id=${incident.report.id})}" class="text-danger fw-bold ">X</span>
+                        <span th:href="@{/incidents/delete/{id}(id=${incident.report.id})}" class="text-danger fw-bold ">X</span>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(incidents)}">
-                    <td colspan="6" class="text-center text-muted">Aucun incident critique à signaler. Tout fonctionne !</td>
+                    <td colspan="6" class="text-center text-muted">No critical incidents to report. Everything works ! </td>
                 </tr>
                 </tbody>
             </table>

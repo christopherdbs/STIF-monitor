@@ -22,6 +22,14 @@ public class EquipmentService {
         return equipmentRepository.findById(id).orElse(null);
     }
 
+    public Equipment getReference(Integer id) {
+        return equipmentRepository.getReferenceById(id);
+    }
+
+    public List<Equipment> findAll() {
+        return equipmentRepository.findAll();
+    }
+
     public void delete(Integer id) {
         equipmentRepository.deleteById(id);
     }

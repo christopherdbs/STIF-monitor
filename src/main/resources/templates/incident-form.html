@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Incident Report Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+            min-height: 100vh;
+        }
+        .card { border-radius: 18px; border: none; }
+        .header {
+            background: linear-gradient(135deg, #0d6efd, #3b82f6);
+            color: white; padding: 25px; border-radius: 18px 18px 0 0;
+        }
+        .info-box {
+            background: #f8fafc; border-radius: 12px;
+            padding: 12px 15px; border: 1px solid #e9ecef;
+            transition: all 0.2s;
+        }
+        /* Effet focus pour les champs dans les box */
+        .info-box:focus-within {
+            border-color: #3b82f6;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .label { font-size: 0.85rem; color: #6c757d; font-weight: 600; margin-bottom: 4px; }
+        .form-control, .form-select {
+            border: none; background: transparent; padding: 0;
+            font-weight: 500; color: #1e293b;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: none; outline: none; background: transparent;
+        }
+
+        .form-select.is-invalid {
+            border: 1px solid #dc3545 !important; /* Rouge Bootstrap */
+            background-color: #fff5f5 !important; /* Fond légèrement rosé */
+        }
+
+        /* On s'assure que le message d'erreur s'affiche bien */
+        .invalid-feedback {
+            display: none; /* Caché par défaut */
+            color: #dc3545;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        /* Si le select a la classe is-invalid, on montre le message qui suit */
+        .is-invalid ~ .invalid-feedback {
+            display: block !important;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container py-5" style="max-width: 750px;">
+    <div class="card shadow">
+
+        <div class="header text-center">
+            <h3 class="mb-1" th:text="${incidentReport.id == null ? 'New Report' : 'Edit Report'}">Incident Form</h3>
+            <small th:text="${incidentReport.id == null ? 'Register a new incident' : 'Update incident #' + incidentReport.id}"></small>
+        </div>
+
+        <div class="p-4">
+            <form id="incidentForm">
+                <input type="hidden" name="id" id="reportId" th:value="${incidentReport.id}">
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="info-box">
+                            <label class="label">Nature</label>
+                            <input type="text" name="nature" class="form-control" th:value="${incidentReport.nature}" placeholder="Ex: Broken step" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="info-box">
+                            <label class="label">Date Time</label>
+                            <input type="datetime-local" name="dateTime" class="form-control"
+                                   th:value="${incidentReport.dateTime != null ? #temporals.format(incidentReport.dateTime, 'yyyy-MM-dd''T''HH:mm') : ''}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="info-box">
+                            <label class="label">Equipment</label>
+                            <select name="equipmentId" id="equipmentSelect" class="form-select" required>
+                                <option value="">Select Equipment</option>
+                                <option th:each="item : ${equipments}"
+                                        th:value="${item.id}"
+                                        th:text="${item.serialNumber}"
+                                        th:selected="${incidentReport.equipment != null && item.id == incidentReport.equipment.id}">
+                                </option>
+                            </select>
+                            <div id="equipmentError" style="display: none; color: red; font-size: 0.8em; margin-top: 5px;">
+                                Veuillez sélectionner un équipement valide.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="info-box">
+                            <label class="label">Assigned Company</label>
+                            <input type="text" name="assignedCompany" class="form-control" th:value="${incidentReport.assignedCompany}" placeholder="Ex: OTIS">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="info-box">
+                            <label class="label">Agent ID</label>
+                            <input type="number" name="agentId" class="form-control" th:value="${incidentReport.agentId != null ? incidentReport.agentId : 1}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="info-box d-flex justify-content-between align-items-center">
+                            <div>
+                                <label class="label d-block">Status</label>
+                                <span class="value">Is the incident resolved?</span>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isRepaired" name="isRepaired"
+                                       style="width: 2.5em; height: 1.25em;" th:checked="${incidentReport.isRepaired}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="info-box">
+                            <label class="label">Comments</label>
+                            <textarea name="comments" class="form-control" rows="3" th:text="${incidentReport.comments}" placeholder="Technical details..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a th:href="@{/}" class="btn btn-outline-secondary px-4">Cancel</a>
+                    <button type="button" onclick="submitToApi()" class="btn btn-primary px-4 fw-bold shadow-sm">
+                        Save Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function validateForm() {
+        const select = document.getElementById('equipmentSelect');
+
+        if (!select) return false;
+
+        // Si la valeur est vide
+        if (select.value === "") {
+            select.classList.add('is-invalid'); // Active le rouge et le message
+            return false;
+        } else {
+            select.classList.remove('is-invalid'); // Retire le rouge
+            return true;
+        }
+    }
+
+    async function submitToApi() {
+        if (!validateForm()) {
+            return; // On stoppe l'envoi
+        }
+        const form = document.getElementById('incidentForm');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // Mapping spécial pour l'objet imbriqué Equipment
+        data.equipment = { id: parseInt(data.equipmentId) };
+        delete data.equipmentId;
+
+        // Conversion des types
+        data.agentId = parseInt(data.agentId);
+        data.isRepaired = document.getElementById('isRepaired').checked;
+
+        const id = document.getElementById('reportId').value;
+        const url = id ? `/api/incidents/${id}` : '/api/incidents';
+        const method = id ? 'PUT' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                window.location.href = "/";
+            } else {
+                alert("Error during saving.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Network error.");
+        }
+    }
+</script>
+
+</body>
+</html>
