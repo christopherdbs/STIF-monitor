@@ -48,19 +48,33 @@ public class IncidentController {
     }
 
 
-    @GetMapping("/incidents/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("incidents", new IncidentReport());
-        //model.addAttribute("equipments", incidentService.findAll());
-        return "create-incident";
-    }
+    @GetMapping({"/incidents/add", "/incidents/edit/{id}"})
+    public String showIncidentForm(Model model, @PathVariable(required = false) Integer id) {
+        IncidentReport incidentReport;
 
+        if (id != null) {
+            incidentReport = incidentService.findById(id);
+
+            if (incidentReport == null) {
+                return "redirect:/";
+            }
+        } else {
+            incidentReport = new IncidentReport();
+            incidentReport.setDateTime(java.time.LocalDateTime.now());
+        }
+        System.out.println("Nombre d'équipements envoyés au form : " + equipmentService.findAll().size());
+        model.addAttribute("incidentReport", incidentReport);
+        model.addAttribute("equipments", equipmentService.findAll());
+
+        return "incident-form";
+    }
+/*
     @PostMapping("/incidents/{id}/modify")
     public String modifyForm(@RequestParam Integer id, @ModelAttribute IncidentReport oldIncidentReport, Model model) {
         incidentService.updateIncidentReport(id, oldIncidentReport);
         return "redirect:/incidents/{id}";
     }
-
+*/
 
 
 }
