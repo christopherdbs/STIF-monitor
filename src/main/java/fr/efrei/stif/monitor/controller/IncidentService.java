@@ -92,5 +92,9 @@ public class IncidentService {
         incidentRepository.deleteById(id);
     }
 
+    public List<IncidentReport> findAll() {
+        return incidentRepository.findAll();
+    }
+
 
 }

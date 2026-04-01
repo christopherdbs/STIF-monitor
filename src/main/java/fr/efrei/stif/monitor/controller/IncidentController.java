@@ -7,7 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class IncidentController {
@@ -23,8 +26,41 @@ public class IncidentController {
     @GetMapping("/")
     public String dashboard(Model model) {
         List<CompletedReport> activeIncidents = incidentService.getActiveIncidents();
+
+        List<IncidentReport> incidents = incidentService.findAll();
+        Map<String, Long> stationCountMap = new HashMap<>();
+        Map<String, Long> statusCountMap = new HashMap<>();
+
+        for (IncidentReport incidentReport : incidents) {
+            String stationName = incidentReport.getEquipment().getStation().getStationName();
+
+            if (stationName != null && !stationName.isEmpty()) {
+                if(stationCountMap.containsKey(stationName)){
+                    stationCountMap.put(stationName, stationCountMap.get(stationName) + 1);
+                }else {
+                    stationCountMap.put(stationName, 1L);
+                }
+            }
+        }
+        for (IncidentReport incidentReport : incidents) {
+            String status;
+
+            if(incidentReport.getIsRepaired()){
+                status = "Repaired";
+            }else {
+                status = "not Repaired";
+            }
+            if (statusCountMap.containsKey(status)) {
+                statusCountMap.put(status, statusCountMap.get(status) + 1);
+            } else {
+                statusCountMap.put(status, 1L);
+            }
+        }
+
         System.out.println(activeIncidents);
         model.addAttribute("incidents", activeIncidents);
+        model.addAttribute("incidentsStationCount", stationCountMap);
+        model.addAttribute("incidentsStatusCount", statusCountMap);
         return "dashboard";
     }
 
