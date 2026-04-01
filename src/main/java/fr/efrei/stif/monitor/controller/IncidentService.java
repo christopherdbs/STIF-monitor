@@ -23,7 +23,7 @@ public class IncidentService {
     }
 
     public List<CompletedReport> getActiveIncidents(){
-        List<IncidentReport> reports = incidentRepository.findByIsRepairedFalse();
+        List<IncidentReport> reports = incidentRepository.findByStatusFalse();
 
         return reports.stream().map(report -> {
             CompletedReport completed = new CompletedReport(report);
@@ -87,6 +87,7 @@ public class IncidentService {
         if (hours < 72) return "ORANGE";
         return "RED";
     }
+
     public void delete(Integer id) {
         incidentRepository.deleteById(id);
     }

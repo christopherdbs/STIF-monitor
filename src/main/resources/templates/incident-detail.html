@@ -68,7 +68,7 @@
                 <div class="col-md-6">
                     <div class="info-box">
                         <div class="label">ID</div>
-                        <div class="value" th:text="${incidentReport.id}"></div>
+                        <div class="value" th:text="${'IR-'+incidentReport.id}"></div>
                     </div>
                 </div>
 
@@ -96,19 +96,19 @@
                 <div class="col-md-6">
                     <div class="info-box">
                         <div class="label">Agent ID</div>
-                        <div class="value" th:text="${incidentReport.agentId}"></div>
+                        <div class="value" th:text="${'AGT-'+incidentReport.agentId}"></div>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="info-box">
-                        <div class="label">Repaired</div>
+                        <div class="label">Status</div>
                         <div class="value">
                             <span class="badge bg-success badge-status"
-                                  th:if="${incidentReport.isRepaired}">Yes</span>
+                                  th:if="${incidentReport.status}">Closed</span>
 
-                            <span class="badge bg-danger badge-status"
-                                  th:unless="${incidentReport.isRepaired}">No</span>
+                            <span class="badge bg-primary badge-status"
+                                  th:unless="${incidentReport.status}">Open</span>
                         </div>
                     </div>
                 </div>
@@ -159,8 +159,8 @@
                             <div class="value" th:text="${hist.nature}">Nature de l'incident</div>
                         </div>
                         <div>
-                            <span th:if="${hist.isRepaired}" class="badge bg-success-subtle text-success border border-success-subtle">Repaired</span>
-                            <span th:unless="${hist.isRepaired}" class="badge bg-warning-subtle text-warning border border-warning-subtle">Pending</span>
+                            <span th:if="${hist.status}" class="badge bg-success-subtle text-success border border-success-subtle">Repaired</span>
+                            <span th:unless="${hist.status}" class="badge bg-warning-subtle text-warning border border-warning-subtle">Pending</span>
                         </div>
                     </div>
                     <div class="mt-2 small text-secondary" th:text="${hist.comments}">Comments...</div>
