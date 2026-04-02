@@ -3,13 +3,15 @@ package fr.efrei.stif.monitor.controller;
 import fr.efrei.stif.monitor.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class IncidentService {
@@ -23,13 +25,13 @@ public class IncidentService {
     }
 
     public List<CompletedReport> getActiveIncidents(){
-        List<IncidentReport> reports = incidentRepository.findByStatusFalse();
+        List<IncidentReport> reports = incidentRepository.findByStatusFalseOrderByDateTimeAsc();
 
         return reports.stream().map(report -> {
             CompletedReport completed = new CompletedReport(report);
             long hours = getElapsedHours(report);
             completed.setElapsedHours(hours);
-            completed.setStatusIndicator(getStatusIndicator(report, hours));
+            completed.setStatusIndicator(getStatusIndicator(hours));
             return completed;
         }).toList();
     }
@@ -81,8 +83,7 @@ public class IncidentService {
         return Duration.between(report.getDateTime(), LocalDateTime.now()).toHours();
     }
 
-    public String getStatusIndicator(IncidentReport report, long hours) {
-        if (report.getAssignedCompany() != null) return "ASSIGNED";
+    public String getStatusIndicator(long hours) {
         if (hours < 48) return "GREEN";
         if (hours < 72) return "ORANGE";
         return "RED";
@@ -96,5 +97,24 @@ public class IncidentService {
         return incidentRepository.findAll();
     }
 
+    public List<Map<String, Object>> getCompanySuggestions() {
+        List<String> companyNames = Arrays.asList(
+                "Otis Maintenance", "Schindler Service", "Kone Repairs",
+                "ThyssenKrupp Tech", "Sigma Elevators", "Stannah Specialist"
+        );
 
+        Random random = new Random();
+        Collections.shuffle(companyNames);
+
+        return companyNames.stream()
+                .limit(3)
+                .map(name -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("name", name);
+                    map.put("percentage", random.nextInt(31) + 65);
+                    return map;
+                })
+                .sorted((m1, m2) -> ((Integer) m2.get("percentage")).compareTo((Integer) m1.get("percentage")))
+                .collect(Collectors.toList());
+    }
 }

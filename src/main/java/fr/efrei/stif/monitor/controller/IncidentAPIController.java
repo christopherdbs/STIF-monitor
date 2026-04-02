@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/incidents")
 public class IncidentAPIController {
@@ -36,5 +39,10 @@ public class IncidentAPIController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping("/{id}/assign")
+    public ResponseEntity<List<Map<String, Object>>> getSuggestions(@PathVariable Integer id) {
+        return ResponseEntity.ok(incidentService.getCompanySuggestions());
     }
 }

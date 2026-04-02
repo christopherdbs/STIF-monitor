@@ -45,7 +45,7 @@ public class IncidentController {
         for (IncidentReport incidentReport : incidents) {
             String status;
 
-            if(incidentReport.getIsRepaired()){
+            if(incidentReport.getStatus()){
                 status = "Repaired";
             }else {
                 status = "not Repaired";
