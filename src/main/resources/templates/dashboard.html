@@ -83,7 +83,7 @@
                             <th>Station</th>
                             <th>Reported since</th>
                             <th>Type</th>
-                            <th>Actions</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -127,15 +127,11 @@
             </div>
         </div>
 
-        <!-- graph -->
         <div style="display:flex; gap:20px; width:1000px; margin:40px auto;">
-
-            <!-- bar chart-->
             <div style="flex:1; height:300px;">
                 <canvas id="chartStation"></canvas>
             </div>
 
-            <!-- pie chart -->
             <div style="flex:1; height:300px;">
                 <canvas id="pieChart"></canvas>
             </div>
@@ -143,7 +139,6 @@
         </div>
 
         <script th:inline="javascript">
-            //bar chart
             let stationMap = /*[[${incidentsStationCount}]]*/ [];
             let stationLabels = Object.keys(stationMap);
             let stationData = Object.values(stationMap);
@@ -185,10 +180,15 @@
                 }
             });
 
-            //pie chart
             let statusMap = /*[[${incidentsStatusCount}]]*/ [];
             let statusLabels = Object.keys(statusMap);
             let statusData = Object.values(statusMap);
+
+            const backgroundColors = statusLabels.map(label => {
+                if (label === 'Resolved') return 'rgba(54, 162, 235, 0.7)';
+                if (label === 'Pending') return 'rgba(255, 159, 64, 0.7)';
+                return 'rgba(54, 162, 235, 0.8)';
+            });
 
             const pieCtx = document.getElementById('pieChart');
 
@@ -198,6 +198,7 @@
                     labels: statusLabels,
                     datasets: [{
                         label: 'Incident Status',
+                        backgroundColor: backgroundColors,
                         data: statusData
                     }]
                 },

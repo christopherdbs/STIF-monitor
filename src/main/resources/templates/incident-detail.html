@@ -47,6 +47,22 @@
             padding: 6px 12px;
             border-radius: 10px;
         }
+        .history-item-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .history-item-link .info-box {
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .history-item-link:hover .info-box {
+            transform: scale(1.02);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -55,13 +71,11 @@
 <div class="container py-5" style="max-width: 750px;">
     <div class="card shadow">
 
-        <!-- Header -->
         <div class="header text-center">
             <h3 class="mb-1">Incident Detail</h3>
             <small>Detailed information</small>
         </div>
 
-        <!-- Body -->
         <div class="p-4">
 
             <div class="row g-3">
@@ -117,19 +131,28 @@
                         <div class="label">Status</div>
                         <div class="value">
                             <span class="badge bg-success badge-status"
-                                  th:if="${incidentReport.status}">Closed</span>
+                                  th:if="${incidentReport.status}">Resolved</span>
 
-                            <span class="badge bg-primary badge-status"
-                                  th:unless="${incidentReport.status}">Open</span>
+                            <span class="badge bg-warning badge-status"
+                                  th:unless="${incidentReport.status}">Pending</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <div class="info-box">
                         <div class="label">Equipment</div>
                         <div class="value"
                              th:text="${incidentReport.equipment != null ? incidentReport.equipment.type : 'No equipment'}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-box">
+                        <div class="label">Serial Number</div>
+                        <div class="value"
+                                  th:text="${incidentReport.equipment != null ? incidentReport.equipment.serialNumber : 'Unknown'}">
                         </div>
                     </div>
                 </div>
@@ -164,21 +187,24 @@
                     No previous incidents recorded for this equipment.
                 </div>
 
-                <div th:each="hist : ${history}" class="info-box mb-2 border-start border-4 border-primary">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="label" th:text="${#temporals.format(hist.dateTime, 'dd/MM/yyyy HH:mm')}">Date</div>
-                            <div class="value" th:text="${hist.nature}">Nature de l'incident</div>
+                <div th:each="hist : ${history}" >
+                    <a th:href="@{/incidents/{id}(id=${hist.id})}" class="history-item-link">
+                        <div class="info-box mb-2 border-start border-4 border-primary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="label" th:text="${#temporals.format(hist.dateTime, 'dd/MM/yyyy HH:mm')}">Date</div>
+                                    <div class="value" th:text="${hist.nature}">Incident Nature</div>
+                                </div>
+                                <div>
+                                    <span th:if="${hist.status}" class="badge bg-success-subtle text-success border border-success-subtle">Resolved</span>
+                                    <span th:unless="${hist.status}" class="badge bg-warning-subtle text-warning border border-warning-subtle">Pending</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 small text-secondary" th:text="${hist.comments}">Comments...</div>
                         </div>
-                        <div>
-                            <span th:if="${hist.status}" class="badge bg-success-subtle text-success border border-success-subtle">Repaired</span>
-                            <span th:unless="${hist.status}" class="badge bg-warning-subtle text-warning border border-warning-subtle">Pending</span>
-                        </div>
-                    </div>
-                    <div class="mt-2 small text-secondary" th:text="${hist.comments}">Comments...</div>
+                    </a>
                 </div>
             </div>
-            <!-- Button -->
             <div class="mt-4 text-center">
                 <a th:href="@{/}" class="btn btn-outline-secondary px-4">
                     ← Back
@@ -231,10 +257,9 @@
     }
 
     function assignCompany(incidentId, companyName) {
-        // 1. On met à jour uniquement le champ nécessaire dans notre copie locale
         currentIncident.assignedCompany = companyName;
         console.log(currentIncident);
-        // 2. On envoie l'objet COMPLET au serveur
+
         fetch(`/api/incidents/${incidentId}`, {
             method: 'PUT',
             headers: {
