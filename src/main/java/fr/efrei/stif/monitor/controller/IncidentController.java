@@ -43,21 +43,11 @@ public class IncidentController {
             }
         }
         for (IncidentReport incidentReport : incidents) {
-            String status;
+            String status = incidentReport.getStatus() ? "Resolved" : "Pending";
 
-            if(incidentReport.getStatus()){
-                status = "Repaired";
-            }else {
-                status = "not Repaired";
-            }
-            if (statusCountMap.containsKey(status)) {
-                statusCountMap.put(status, statusCountMap.get(status) + 1);
-            } else {
-                statusCountMap.put(status, 1L);
-            }
+            statusCountMap.put(status, statusCountMap.getOrDefault(status, 0L) + 1);
         }
 
-        System.out.println(activeIncidents);
         model.addAttribute("incidents", activeIncidents);
         model.addAttribute("incidentsStationCount", stationCountMap);
         model.addAttribute("incidentsStatusCount", statusCountMap);
@@ -98,19 +88,10 @@ public class IncidentController {
             incidentReport = new IncidentReport();
             incidentReport.setDateTime(java.time.LocalDateTime.now());
         }
-        System.out.println("Nombre d'équipements envoyés au form : " + equipmentService.findAll().size());
         model.addAttribute("incidentReport", incidentReport);
         model.addAttribute("equipments", equipmentService.findAll());
 
         return "incident-form";
     }
-/*
-    @PostMapping("/incidents/{id}/modify")
-    public String modifyForm(@RequestParam Integer id, @ModelAttribute IncidentReport oldIncidentReport, Model model) {
-        incidentService.updateIncidentReport(id, oldIncidentReport);
-        return "redirect:/incidents/{id}";
-    }
-*/
-
 
 }

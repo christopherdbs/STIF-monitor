@@ -65,7 +65,7 @@ public class IncidentService {
     public IncidentReport updateIncidentReport(Integer id, IncidentReport newIR) {
 
         IncidentReport oldIR = incidentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Incident non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Incident Report not found"));
 
         BeanUtils.copyProperties(newIR, oldIR, "id");
 
@@ -78,7 +78,6 @@ public class IncidentService {
     }
 
     public long getElapsedHours(IncidentReport report) {
-        System.out.print(report.getDateTime());
         if (report.getDateTime() == null) return 0;
         return Duration.between(report.getDateTime(), LocalDateTime.now()).toHours();
     }

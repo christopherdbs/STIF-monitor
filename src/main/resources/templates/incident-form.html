@@ -20,7 +20,7 @@
             padding: 12px 15px; border: 1px solid #e9ecef;
             transition: all 0.2s;
         }
-        /* Effet focus pour les champs dans les box */
+
         .info-box:focus-within {
             border-color: #3b82f6;
             background: #fff;
@@ -36,19 +36,17 @@
         }
 
         .form-select.is-invalid {
-            border: 1px solid #dc3545 !important; /* Rouge Bootstrap */
-            background-color: #fff5f5 !important; /* Fond légèrement rosé */
+            border: 1px solid #dc3545 !important;
+            background-color: #fff5f5 !important;
         }
 
-        /* On s'assure que le message d'erreur s'affiche bien */
         .invalid-feedback {
-            display: none; /* Caché par défaut */
+            display: none;
             color: #dc3545;
             font-size: 0.85rem;
             margin-top: 5px;
         }
 
-        /* Si le select a la classe is-invalid, on montre le message qui suit */
         .is-invalid ~ .invalid-feedback {
             display: block !important;
         }
@@ -96,7 +94,7 @@
                                 </option>
                             </select>
                             <div id="equipmentError" style="display: none; color: red; font-size: 0.8em; margin-top: 5px;">
-                                Veuillez sélectionner un équipement valide.
+                                Please select a valid equipment.
                             </div>
                         </div>
                     </div>
@@ -154,29 +152,26 @@
 
         if (!select) return false;
 
-        // Si la valeur est vide
         if (select.value === "") {
-            select.classList.add('is-invalid'); // Active le rouge et le message
+            select.classList.add('is-invalid');
             return false;
         } else {
-            select.classList.remove('is-invalid'); // Retire le rouge
+            select.classList.remove('is-invalid');
             return true;
         }
     }
 
     async function submitToApi() {
         if (!validateForm()) {
-            return; // On stoppe l'envoi
+            return;
         }
         const form = document.getElementById('incidentForm');
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        // Mapping spécial pour l'objet imbriqué Equipment
         data.equipment = { id: parseInt(data.equipmentId) };
         delete data.equipmentId;
 
-        // Conversion des types
         data.agentId = parseInt(data.agentId);
         data.status = document.getElementById('status').checked;
 
