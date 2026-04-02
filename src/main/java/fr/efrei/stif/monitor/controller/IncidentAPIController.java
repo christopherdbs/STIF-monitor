@@ -28,8 +28,13 @@ public class IncidentAPIController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        incidentService.delete(id);
-        return ResponseEntity.noContent().build();
+    @ResponseBody
+    public ResponseEntity<?> deleteIncident(@PathVariable Integer id) {
+        try {
+            incidentService.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
