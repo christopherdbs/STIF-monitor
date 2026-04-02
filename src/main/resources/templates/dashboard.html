@@ -94,7 +94,7 @@
                                                        (incident.statusIndicator == 'ORANGE' ? 'bg-orange' : 'bg-red')}"
                                      class="status-indicator"
                                      th:title="${incident.elapsedHours} + ' elapsed hours'">
-                                    <i th:if="${incident.report.assignedCompany != null}"
+                                    <i th:unless="${#strings.isEmpty(incident.report.assignedCompany)}"
                                        class="bi bi-check-lg text-white"
                                        style="display: flex; align-items: center; justify-content: center; height: 100%;"></i>
                                 </div>

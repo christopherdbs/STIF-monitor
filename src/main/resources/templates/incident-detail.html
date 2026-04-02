@@ -105,10 +105,10 @@
                     <div class="info-box">
                         <div class="label">Assigned Company</div>
                         <div class="value">
-                            <span th:if="${incidentReport.assignedCompany != null}"
+                            <span th:unless="${#strings.isEmpty(incidentReport.assignedCompany)}"
                                   th:text="${incidentReport.assignedCompany}"></span>
 
-                            <div th:if="${incidentReport.assignedCompany == null}" class="d-flex align-items-center justify-content-between">
+                            <div th:if="${#strings.isEmpty(incidentReport.assignedCompany)}" class="d-flex align-items-center justify-content-between">
                                 <span class="text-muted italic">No Company Assigned</span>
                                 <button type="button" class="btn btn-sm btn-primary ms-2"
                                         th:onclick="'suggestCompanies(' + ${incidentReport.id} + ')'">
