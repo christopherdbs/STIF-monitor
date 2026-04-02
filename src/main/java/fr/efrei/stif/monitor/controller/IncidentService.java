@@ -1,5 +1,6 @@
 package fr.efrei.stif.monitor.controller;
 
+import fr.efrei.stif.monitor.exceptions.IncidentNotFoundException;
 import fr.efrei.stif.monitor.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ public class IncidentService {
         return incidentRepository.findTop3ByEquipmentIdAndIdNotOrderByDateTimeDesc(equipmentId, reportId);
     }
 
+    @Transactional
     public IncidentReport save(IncidentReport incident) {
         if (incident.getEquipment() != null && incident.getEquipment().getId() != null) {
             Equipment eq = equipmentService.findById(incident.getEquipment().getId());
@@ -58,14 +60,14 @@ public class IncidentService {
     }
 
     public IncidentReport findById(Integer id) {
-        return incidentRepository.findById(id).orElse(null);
+        return incidentRepository.findById(id).orElseThrow(() -> new IncidentNotFoundException("Incident with " + id + " doesn't exist."));
     }
 
     @Transactional
     public IncidentReport updateIncidentReport(Integer id, IncidentReport newIR) {
 
         IncidentReport oldIR = incidentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Incident Report not found"));
+                .orElseThrow(() -> new IncidentNotFoundException("Incident Report not found"));
 
         BeanUtils.copyProperties(newIR, oldIR, "id");
 
@@ -88,7 +90,11 @@ public class IncidentService {
         return "RED";
     }
 
+    @Transactional
     public void delete(Integer id) {
+        if (!incidentRepository.existsById(id)) {
+            throw new IncidentNotFoundException("Deletion failed : incident " + id + " not found.");
+        }
         incidentRepository.deleteById(id);
     }
 
